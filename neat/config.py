@@ -182,6 +182,7 @@ class Config(object):
 
         # Parse type sections.
         genome_dict = dict(parameters.items(genome_type.__name__))
+        genome_dict['genome_type'] = genome_type 
         self.genome_config = genome_type.parse_config(genome_dict)
 
         species_set_dict = dict(parameters.items(species_set_type.__name__))

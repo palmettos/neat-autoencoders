@@ -230,6 +230,9 @@ class CircuitGenome(object):
         is used to compute genome compatibility for speciation.
         """
 
+        conn_type = config.connection_gene_type
+        node_type = config.node_gene_type
+
         # Compute node gene distance component.
         node_distance = 0.0
         if self.nodes or other.nodes:
@@ -244,7 +247,7 @@ class CircuitGenome(object):
                     disjoint_nodes += 1
                 else:
                     # Homologous genes compute their own distance value.
-                    node_distance += n1.distance(n2, config)
+                    node_distance += node_type.distance(n1, n2, config)
 
             max_nodes = max(len(self.nodes), len(other.nodes))
             node_distance = (node_distance + config.compatibility_disjoint_coefficient * disjoint_nodes) / max_nodes
@@ -263,7 +266,7 @@ class CircuitGenome(object):
                     disjoint_connections += 1
                 else:
                     # Homologous genes compute their own distance value.
-                    connection_distance += c1.distance(c2, config)
+                    connection_distance += conn_type.distance(c1, c2, config)
 
             max_conn = max(len(self.connections), len(other.connections))
             connection_distance = (connection_distance + config.compatibility_disjoint_coefficient * disjoint_connections) / max_conn

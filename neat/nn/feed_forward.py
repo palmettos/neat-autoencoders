@@ -50,3 +50,66 @@ class FeedForwardNetwork(object):
                 node_evals.append((node, activation_function, aggregation_function, ng.bias, ng.response, inputs))
 
         return FeedForwardNetwork(config.genome_config.input_keys, config.genome_config.output_keys, node_evals)
+
+    @staticmethod
+    def create_autoencoder(genome, config):
+        encoder_connections = [cg.key for cg in genome.encoder.connections.values() if cg.enabled]
+        decoder_connections = [cg.key for cg in genome.decoder.connections.values() if cg.enabled]
+
+        encoder_layers = feed_forward_layers(
+            config.genome_config.encoder_input_keys,
+            config.genome_config.encoder_output_keys,
+            encoder_connections
+        )
+        encoder_node_evals = []
+        for layer in encoder_layers:
+            for node in layer:
+                inputs = []
+                node_expr = [] # currently unused
+                for conn_key in encoder_connections:
+                    inode, onode = conn_key
+                    if onode == node:
+                        cg = genome.encoder.connections[conn_key]
+                        inputs.append((inode, cg.weight))
+                        node_expr.append("v[{}] * {:.7e}".format(inode, cg.weight))
+
+                ng = genome.encoder.nodes[node]
+                aggregation_function = config.genome_config.aggregation_function_defs.get(ng.aggregation)
+                activation_function = config.genome_config.activation_defs.get(ng.activation)
+                encoder_node_evals.append((node, activation_function, aggregation_function, ng.bias, ng.response, inputs))
+
+        decoder_layers = feed_forward_layers(
+            config.genome_config.decoder_input_keys,
+            config.genome_config.decoder_output_keys,
+            decoder_connections
+        )
+        decoder_node_evals = []
+        for layer in decoder_layers:
+            for node in layer:
+                inputs = []
+                node_expr = [] # currently unused
+                for conn_key in decoder_connections:
+                    inode, onode = conn_key
+                    if onode == node:
+                        cg = genome.decoder.connections[conn_key]
+                        inputs.append((inode, cg.weight))
+                        node_expr.append("v[{}] * {:.7e}".format(inode, cg.weight))
+
+                ng = genome.decoder.nodes[node]
+                aggregation_function = config.genome_config.aggregation_function_defs.get(ng.aggregation)
+                activation_function = config.genome_config.activation_defs.get(ng.activation)
+                decoder_node_evals.append((node, activation_function, aggregation_function, ng.bias, ng.response, inputs))
+
+        encoder = FeedForwardNetwork(
+            config.genome_config.encoder_input_keys,
+            config.genome_config.encoder_output_keys,
+            encoder_node_evals
+        )
+
+        decoder = FeedForwardNetwork(
+            config.genome_config.decoder_input_keys,
+            config.genome_config.decoder_output_keys,
+            decoder_node_evals
+        )
+
+        return encoder, decoder

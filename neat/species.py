@@ -32,12 +32,13 @@ class GenomeDistanceCache(object):
         self.misses = 0
 
     def __call__(self, genome0, genome1):
+        genome_type = self.config.genome_type
         g0 = genome0.key
         g1 = genome1.key
         d = self.distances.get((g0, g1))
         if d is None:
             # Distance is not already computed.
-            d = genome0.distance(genome1, self.config)
+            d = genome_type.distance(genome0, genome1, self.config)
             self.distances[g0, g1] = d
             self.distances[g1, g0] = d
             self.misses += 1
