@@ -113,10 +113,8 @@ class AutoencoderGenomeConfig(object):
                                       if 'initial_connection' not in p.name])
 
     def get_new_node_key(self, node_dict):
-        if self.node_indexer is None:
-            self.node_indexer = count(max(list(node_dict)) + 1)
 
-        new_id = next(self.node_indexer)
+        new_id = max(list(node_dict)) + 1
 
         assert new_id not in node_dict
 
@@ -228,10 +226,8 @@ class DefaultGenomeConfig(object):
                                       if 'initial_connection' not in p.name])
 
     def get_new_node_key(self, node_dict):
-        if self.node_indexer is None:
-            self.node_indexer = count(max(list(node_dict)) + 1)
 
-        new_id = next(self.node_indexer)
+        new_id = max(list(node_dict)) + 1
 
         assert new_id not in node_dict
 
@@ -797,7 +793,7 @@ class AutoencoderGenome(DefaultGenome):
                 self.decoder.connections[key] = cg1.crossover(cg2)
         #----------------------------------------------------------------
 
-        # inhert node genes
+        # inherit node genes
         #----------------------------------------------------------------
         parent1_encoder_set = parent1.encoder.nodes
         parent1_decoder_set = parent1.decoder.nodes
@@ -891,8 +887,8 @@ class AutoencoderGenome(DefaultGenome):
         conn_to_split.enabled = False
 
         i, o = conn_to_split.key
-        side.add_connection(config, i, new_node_id, side, 1.0, True)
-        side.add_connection(config, new_node_id, o, side, conn_to_split.weight, True)
+        self.add_connection(config, i, new_node_id, side, 1.0, True)
+        self.add_connection(config, new_node_id, o, side, conn_to_split.weight, True)
 
     def add_connection(self, config, input_key, output_key, side, weight, enabled):
         assert isinstance(input_key, int)
