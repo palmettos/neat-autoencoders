@@ -1,6 +1,8 @@
 import neat
 import numpy as np
 from sklearn.neighbors import KDTree
+from matplotlib import pyplot as plt
+from matplotlib.widgets import Slider
 
 
 dimensions = 6
@@ -39,8 +41,31 @@ p = neat.Population(config)
 p.add_reporter(neat.StdOutReporter(False))
 winner = p.run(eval_genomes)
 encoder, decoder = neat.nn.FeedForwardNetwork.create_autoencoder(winner, config)
-for input in inputs:
-    print(f'input: {input}')
-    bottleneck_output = encoder.activate(input)
-    reconstructed = decoder.activate(bottleneck_output)
-    print(f'output: {reconstructed}')
+
+input = inputs[0]
+bottleneck_output = encoder.activate(input)
+reconstructed = decoder.activate(bottleneck_output)
+
+
+fig, ax = plt.subplots()
+im = ax.imshow(np.array([reconstructed]))
+
+axcolor = 'lightgoldenrodyellow'
+decoder_input_axes = []
+decoder_input_sliders = []
+for i, out in enumerate(bottleneck_output):
+    y_pos = (i + 1) * 0.1
+    decoder_input_axes.append(plt.axes([0.25, y_pos, 0.65, 0.03], facecolor=axcolor))
+    decoder_input_sliders.append(Slider(decoder_input_axes[i], f'bottleneck_input{str(i)}', 0.0, 1.0, valinit=out))
+
+def create_update_func(i):
+    def update(val):
+        bottleneck_output[i] = val
+        print(bottleneck_output)
+        im.set_data(np.array([decoder.activate(bottleneck_output)]))
+    return update
+
+for i, slider in enumerate(decoder_input_sliders):
+    slider.on_changed(create_update_func(i))
+
+plt.show()
