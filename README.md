@@ -1,7 +1,7 @@
 This is a fork of [neat-python](https://github.com/CodeReclaimers/neat-python) with added support for autoencoders with evolvable topologies.
 
 `AutoencoderGenome` creates an encoder and decoder module that can be trained end-to-end.
-`FeedForwardNetwork` has a new factory function, `create_autoencoder`, which takes in an `AutoencoderGenome` and returns an `(encoder: DefaultGenome, decoder: DefaultGenome)` tuple. The `AutoencoderGenome` replaces the `num_output` configuration option with `bottleneck_size`.
+`FeedForwardNetwork` has a new factory function, `create_autoencoder`, which takes in an `AutoencoderGenome` and returns an `(encoder: FeedForwardNetwork, decoder: FeedForwardNetwork)` tuple. The `AutoencoderGenome` replaces the `num_output` configuration option with `bottleneck_size`.
 Example code is provided in `test-autoencoder-objective.py` and `test-autoencoder-novelty.py`.
 
 Current issues:
