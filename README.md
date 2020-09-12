@@ -6,8 +6,5 @@ Example code is provided in `test-autoencoder-objective.py` and `test-autoencode
 
 For the objective example, once the network has reached a satisfactory fitness, a plot will be shown with sliders that allow you to modify the bottleneck inputs to the decoder module.
 
-Current issues:
-- There is currently no constraint that guarantees an input node is always connected to a hidden or output node. In the context of autoencoders, disconnected inputs are usually problematic. In some cases it doesn't matter, like if input 1 tells you everything you need to know about input 2, then input 2 is redundant. In most cases you probably want all input nodes to have at least one connection to a hidden or output node.
-
 Limitations:
 - These are simple feedforward networks, so they will only perform well on certain kinds of data -- in particular, data where the features do not have local relationships. In theory, it's still possible for the network to learn these relationships, but probably unreasonably difficult for anything other than toy problems. Use convolutional neural networks for this kind of data.
