@@ -713,18 +713,24 @@ class AutoencoderGenome(DefaultGenome):
             self.decoder.nodes[node_key] = self.create_node(config, node_key)
 
         if config.num_hidden > 0:
+            used_keys_encoder = list(self.encoder.nodes.keys())
+            used_keys_decoder = list(self.decoder.nodes.keys())
+            used_keys = used_keys_encoder + used_keys_decoder
+
             for i in range(config.num_hidden):
-                node_key = config.get_new_node_key(self.nodes)
+                node_key = config.get_new_node_key(used_keys)
                 assert node_key not in self.encoder.nodes
                 assert node_key not in self.decoder.nodes
                 node = self.create_node(config, node_key)
                 self.encoder.nodes[node_key] = node
+                used_keys.append(node_key)
             for i in range(config.num_hidden):
-                node_key = config.get_new_node_key(self.nodes)
+                node_key = config.get_new_node_key(used_keys)
                 assert node_key not in self.encoder.nodes
                 assert node_key not in self.decoder.nodes
                 node = self.create_node(config, node_key)
                 self.decoder.nodes[node_key] = node
+                used_keys.append(node_key)
             
         if 'fs_neat' in config.initial_connection:
             if config.initial_connection == 'fs_neat_nohidden':
