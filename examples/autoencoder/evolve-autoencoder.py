@@ -64,6 +64,14 @@ class NeatOutlier(OutlierMixin, UnsupervisedMixin):
         """Useful only on small input dimensions"""
         # visualize.plot_slider(X, self.encoder, self.decoder, view=True)
 
+        visualize.draw_net_encoder(config, winner.encoder, True,
+                           node_colors={key: 'yellow' for key in winner.encoder.nodes},
+                           show_disabled=True)
+
+        visualize.draw_net_decoder(config, winner.decoder, True,
+                           node_colors={key: 'yellow' for key in winner.decoder.nodes},
+                           show_disabled=True)
+
         visualize.plot_stats(stats, ylog=False, view=True)
         visualize.plot_species(stats, view=True)
 
@@ -129,7 +137,7 @@ if __name__ == '__main__':
     config = AnomalyDetectionConfig(neat.AutoencoderGenome, neat.DefaultReproduction, neat.DefaultSpeciesSet,
                                     neat.DefaultStagnation,'evolve-autoencoder.cfg')
 
-    dataset = datasets.load_wine()
+    dataset = datasets.load_iris()
     X = dataset.data
     y = dataset.target
     names = dataset.target_names
